@@ -1,12 +1,18 @@
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import time
 
 
 def setup_driver():
-    driver = webdriver.Chrome()
-    driver.maximize_window()
+    chrome_options = Options()
+    chrome_options.add_argument("--headless=new")
+    chrome_options.add_argument("--window-size=1920,1080")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+
+    driver = webdriver.Chrome(options=chrome_options)
     driver.implicitly_wait(10)
     return driver
 
@@ -31,8 +37,6 @@ def test_successful_login():
         dashboard_header = driver.find_element(By.XPATH, "//h6[text()='Dashboard']")
         assert dashboard_header.is_displayed()
         print("Тест успішного входу пройдено")
-
-        time.sleep(20)
     finally:
         driver.quit()
 
@@ -46,8 +50,6 @@ def test_invalid_login():
         error_message = driver.find_element(By.XPATH, "//p[text()='Invalid credentials']")
         assert error_message.is_displayed()
         print("Тест неправильного входу пройдено")
-
-        time.sleep(20)
     finally:
         driver.quit()
 
@@ -65,7 +67,5 @@ def test_navigation_to_my_info():
         url = driver.current_url
         assert "viewPersonalDetails" in url or "pim" in url.lower()
         print("Тест переходу на сторінку My Info пройдено")
-
-        time.sleep(20)
     finally:
         driver.quit()
